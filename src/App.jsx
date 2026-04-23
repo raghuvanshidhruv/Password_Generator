@@ -9,7 +9,7 @@ function App() {
 
   return (
     <>
-      <h1>Pass Generator</h1>
+      <h1 className='text-4xl text-center text-white'>Pass Generator</h1>
     </>
   )
 }
