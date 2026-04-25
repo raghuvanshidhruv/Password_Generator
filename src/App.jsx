@@ -1,10 +1,12 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 
 function App() {
   const [length, setLength] = useState(8);
   const [numberAllowed, setNumberAllowed] = useState(false);
   const [specCharacter, setSpecCharacter] = useState(false);
-  const [password, setPassword] = "";
+  const [password, setPassword] = useState("");
+
+  const passwordRef = useRef(null);
 
   const passwordGenerator = useCallback(() => {
     let pass = "";
@@ -16,9 +18,18 @@ function App() {
       let char = Math.floor(Math.random() * str.length + 1);
       pass += str.charAt(char);
     }
-
     setPassword(pass);
   }, [length, numberAllowed, specCharacter, setPassword]);
+
+  const copyPassword = useCallback(() => {
+    passwordRef.current?.select();
+    passwordRef.current?.setSelectionRange(0, length);  
+    window.navigator.clipboard.writeText(password)
+  }, [password])
+
+  useEffect(() => {
+    passwordGenerator();
+  }, [length, numberAllowed, specCharacter, passwordGenerator]);
 
   return (
     <div className="w-full max-w-md mx-auto shadow-md rounded-lg px-4 py-3 my-8 bg-gray-800 text-orange-500">
@@ -30,8 +41,9 @@ function App() {
           className="outline-none w-full py-1 px-3 bg-white text-black"
           placeholder="Password"
           readOnly
+          ref={passwordRef}
         />
-        <button className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0 transition-all duration-300 hover:scale-130 hover:shadow-xl hover:bg-blue-700">
+        <button onClick={copyPassword} className="outline-none bg-blue-700 text-white px-3 py-0.5 shrink-0 transition-all duration-300 hover:scale-130 hover:shadow-xl hover:bg-blue-700">
           Copy
         </button>
       </div>
